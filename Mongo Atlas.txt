@@ -1,0 +1,99 @@
+Mongo Atlas
+## Se pueden crear bases de datos utilizando CLI o Terraform
+terraform {
+  required_providers {
+    mongodbatlas = {
+      source = "mongodb/mongodbatlas"
+      version = "1.0.0"
+    }
+  }
+}
+
+provider "mongodbatlas" {
+  # Configuration options
+}
+
+# Example multi-region cluster
+resource "mongodbatlas_cluster" "cluster-test" {
+  project_id               = &quot;<YOUR-PROJECT-ID>&quot;
+  name                     = "cluster-test-multi-region"
+  disk_size_gb             = 100
+  num_shards               = 1
+  cloud_backup             = true
+  cluster_type             = "REPLICASET"
+
+  # Provider Settings "block"
+  provider_name               = "AWS"
+  provider_instance_size_name = "M10"
+
+  replication_specs {
+    num_shards = 1
+    regions_config {
+      region_name     = "US_EAST_1"
+      electable_nodes = 3
+      priority        = 7
+      read_only_nodes = 0
+    }
+    regions_config {
+      region_name     = "US_EAST_2"
+      electable_nodes = 2
+      priority        = 6
+      read_only_nodes = 0
+    }
+    regions_config {
+      region_name     = "US_WEST_1"
+      electable_nodes = 2
+      priority        = 5
+      read_only_nodes = 2
+    }
+  }
+}
+
+## Puede servir para almacenar las coordenadas
+
+db.places.find(
+   {
+     location:
+       { $near:
+          {
+            $geometry: { type: "Point",  coordinates: [ -73.9667, 40.78 ] },
+            $minDistance: 1000,
+            $maxDistance: 5000
+          }
+       }
+   }
+)
+
+## Ejemplo en Node
+await db.collection('inventory').insertMany([
+  {
+    item: 'journal',
+    qty: 25,
+    size: { h: 14, w: 21, uom: 'cm' },
+    status: 'A'
+  },
+  {
+    item: 'notebook',
+    qty: 50,
+    size: { h: 8.5, w: 11, uom: 'in' },
+    status: 'A'
+  },
+  {
+    item: 'paper',
+    qty: 100,
+    size: { h: 8.5, w: 11, uom: 'in' },
+    status: 'D'
+  },
+  {
+    item: 'planner',
+    qty: 75,
+    size: { h: 22.85, w: 30, uom: 'cm' },
+    status: 'D'
+  },
+  {
+    item: 'postcard',
+    qty: 45,
+    size: { h: 10, w: 15.25, uom: 'cm' },
+    status: 'A'
+  }
+]);

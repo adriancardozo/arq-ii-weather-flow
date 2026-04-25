@@ -1,7 +1,7 @@
 import { Controller } from '@nestjs/common';
-import { IUserService } from 'src/bussiness-logic/service/interface/i-user.service';
+import { IUserService } from 'src/bussiness/ports/input/services/i-user.service';
 
-@Controller()
+@Controller('auth')
 export class AuthController {
   constructor(private readonly userService: IUserService) {}
 }

@@ -1,8 +1,24 @@
-import { NestFactory } from '@nestjs/core';
+import { NestApplication, NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
+import { Logger } from '@nestjs/common';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { Configuration } from './configuration/configuration';
+import { CONFIG_SERVICE } from './configuration/config.service';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
-  await app.listen(process.env.PORT ?? 3000);
+  const appConfig = CONFIG_SERVICE.get<Configuration['app']>('app')!;
+  const app = await NestFactory.create(AppModule, appConfig.options);
+  const config = new DocumentBuilder()
+    .setTitle(appConfig.title)
+    .setDescription(appConfig.description)
+    .setVersion(appConfig.api_version)
+    .addBearerAuth()
+    .build();
+  const documentFactory = () => SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup(appConfig.docs.path, app, documentFactory);
+  await app.listen(appConfig.port);
+  const logger = app.get(Logger);
+  logger.log(`Serving at: ${await app.getUrl()}`, NestApplication.name);
+  logger.log(`API docs: ${await app.getUrl()}/${appConfig.docs.path}`, NestApplication.name);
 }
 void bootstrap();

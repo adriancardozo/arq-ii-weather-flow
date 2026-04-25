@@ -1,29 +1,28 @@
-import { Module } from '@nestjs/common';
-import { AppController } from './presentation/app.controller';
-import { AppService } from './bussiness-logic/service/app.service';
-import { IAppService } from './bussiness-logic/service/interface/i-app.service';
-import { IUserService } from './bussiness-logic/service/interface/i-user.service';
-import { IStationService } from './bussiness-logic/service/interface/i-station.service';
-import { IMeasurementService } from './bussiness-logic/service/interface/i-measurement.service';
-import { MongoMeasurementRepository } from './data-access/mongo-measurement.repository';
-import { MongoStationRepository } from './data-access/mongo-station.repository';
-import { MongoUserRepository } from './data-access/mongo-user.repository';
-import { IMeasurementRepository } from './bussiness-logic/repository/interface/i-measurement.repository';
-import { IStationRepository } from './bussiness-logic/repository/interface/i-station.repository';
-import { IUserRepository } from './bussiness-logic/repository/interface/i-user.repository';
-import { MeasurementService } from './bussiness-logic/service/measurement.service';
-import { StationService } from './bussiness-logic/service/station.service';
-import { UserService } from './bussiness-logic/service/user.service';
-import { AuthController } from './presentation/auth.controller';
-import { MeasurementController } from './presentation/measurement.controller';
-import { StationController } from './presentation/station.controller';
+import { Logger, Module } from '@nestjs/common';
+import { AppController } from './adapters/primary/http/controllers/app.controller';
+import { IUserService } from './bussiness/ports/input/services/i-user.service';
+import { IStationService } from './bussiness/ports/input/services/i-station.service';
+import { IMeasurementService } from './bussiness/ports/input/services/i-measurement.service';
+import { MongoMeasurementRepository } from './adapters/secondary/mongo/repositories/mongo-measurement.repository';
+import { MongoStationRepository } from './adapters/secondary/mongo/repositories/mongo-station.repository';
+import { MongoUserRepository } from './adapters/secondary/mongo/repositories/mongo-user.repository';
+import { IMeasurementRepository } from './bussiness/ports/output/repositories/i-measurement.repository';
+import { IStationRepository } from './bussiness/ports/output/repositories/i-station.repository';
+import { IUserRepository } from './bussiness/ports/output/repositories/i-user.repository';
+import { MeasurementService } from './bussiness/services/measurement.service';
+import { StationService } from './bussiness/services/station.service';
+import { UserService } from './bussiness/services/user.service';
+import { AuthController } from './adapters/primary/http/controllers/auth.controller';
+import { MeasurementController } from './adapters/primary/http/controllers/measurement.controller';
+import { StationController } from './adapters/primary/http/controllers/station.controller';
+import { ConfigModule } from '@nestjs/config';
+import configuration from './configuration/configuration';
 
 @Module({
-  imports: [],
+  imports: [ConfigModule.forRoot({ isGlobal: true, load: [configuration] })],
   controllers: [AppController, AuthController, MeasurementController, StationController],
   providers: [
-    AppService,
-    { provide: IAppService, useExisting: AppService },
+    Logger,
     MeasurementService,
     { provide: IMeasurementService, useExisting: MeasurementService },
     StationService,

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { IMeasurementService } from './interface/i-measurement.service';
-import { IMeasurementRepository } from '../repository/interface/i-measurement.repository';
+import { IMeasurementService } from '../ports/input/services/i-measurement.service';
+import { IMeasurementRepository } from '../ports/output/repositories/i-measurement.repository';
 
 @Injectable()
 export class MeasurementService implements IMeasurementService {

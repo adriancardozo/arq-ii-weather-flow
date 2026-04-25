@@ -1,7 +1,7 @@
 import { Controller } from '@nestjs/common';
-import { IStationService } from 'src/bussiness-logic/service/interface/i-station.service';
+import { IStationService } from 'src/bussiness/ports/input/services/i-station.service';
 
-@Controller()
+@Controller('station')
 export class StationController {
   constructor(private readonly stationService: IStationService) {}
 }

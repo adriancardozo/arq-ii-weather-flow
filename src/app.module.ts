@@ -25,6 +25,8 @@ import { IAuthService } from './bussiness/ports/input/services/i-auth.service';
 import { JwtModule } from '@nestjs/jwt';
 import { BcryptHashService } from './adapters/secondary/bcrypt/services/bcrypt-hash.service';
 import { IHashService } from './bussiness/ports/output/services/i-hash.service';
+import { MongoTransactionService } from './adapters/secondary/mongo/services/mongo-transaction.service';
+import { ITransactionService } from './bussiness/ports/output/services/i-transaction.service';
 
 const { mongo, jwt } = configuration();
 
@@ -48,6 +50,8 @@ const { mongo, jwt } = configuration();
     { provide: IUserService, useExisting: UserService },
     BcryptHashService,
     { provide: IHashService, useExisting: BcryptHashService },
+    MongoTransactionService,
+    { provide: ITransactionService, useExisting: MongoTransactionService },
     MongoMeasurementRepository,
     { provide: IMeasurementRepository, useExisting: MongoMeasurementRepository },
     MongoStationRepository,

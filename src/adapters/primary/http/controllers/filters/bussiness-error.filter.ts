@@ -4,6 +4,7 @@ import {
   ArgumentsHost,
   InternalServerErrorException,
   BadRequestException,
+  Logger,
 } from '@nestjs/common';
 import { BaseExceptionFilter, HttpAdapterHost } from '@nestjs/core';
 import { BussinessError } from 'src/bussiness/errors/bussiness.error';
@@ -11,6 +12,7 @@ import { UserAlreadyExistsError } from 'src/bussiness/errors/user-already-exists
 
 @Catch(BussinessError)
 export class BussinessExceptionFilter implements ExceptionFilter {
+  private readonly logger: Logger = new Logger(BussinessExceptionFilter.name);
   private readonly baseFilter: BaseExceptionFilter;
 
   constructor(private readonly httpAdapterHost: HttpAdapterHost) {
@@ -22,6 +24,7 @@ export class BussinessExceptionFilter implements ExceptionFilter {
       if (exception instanceof UserAlreadyExistsError) throw new BadRequestException(exception.message);
       throw new InternalServerErrorException();
     } catch (error) {
+      this.logger.error(error);
       this.baseFilter.catch(error, host);
     }
   }

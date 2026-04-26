@@ -3,4 +3,6 @@ import { CreateUserInput } from './dtos/input/create-user.input';
 
 export abstract class IUserService {
   abstract create(register: CreateUserInput): Promise<User>;
+
+  abstract findOneByEmail(email: string): Promise<User | null>;
 }

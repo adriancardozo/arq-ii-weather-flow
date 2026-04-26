@@ -27,6 +27,9 @@ import { BcryptHashService } from './adapters/secondary/bcrypt/services/bcrypt-h
 import { IHashService } from './bussiness/ports/output/services/i-hash.service';
 import { MongoTransactionService } from './adapters/secondary/mongo/services/mongo-transaction.service';
 import { ITransactionService } from './bussiness/ports/output/services/i-transaction.service';
+import { PassportModule } from '@nestjs/passport';
+import { LocalStrategy } from './adapters/primary/http/controllers/strategies/local.strategy';
+import { JwtStrategy } from './adapters/primary/http/controllers/strategies/jwt.strategy';
 
 const { mongo, jwt } = configuration();
 
@@ -36,6 +39,7 @@ const { mongo, jwt } = configuration();
     MongooseModule.forRoot(mongo.uri),
     MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
     JwtModule.register({ global: true, secret: jwt.secret, signOptions: { expiresIn: '10d' } }),
+    PassportModule,
   ],
   controllers: [AppController, AuthController, MeasurementController, StationController],
   providers: [
@@ -58,6 +62,8 @@ const { mongo, jwt } = configuration();
     { provide: IStationRepository, useExisting: MongoStationRepository },
     MongoUserRepository,
     { provide: IUserRepository, useExisting: MongoUserRepository },
+    LocalStrategy,
+    JwtStrategy,
   ],
 })
 export class AppModule {}

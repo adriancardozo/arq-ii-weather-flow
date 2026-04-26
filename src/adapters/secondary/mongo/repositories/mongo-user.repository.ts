@@ -27,4 +27,11 @@ export class MongoUserRepository implements IUserRepository<ClientSession> {
       }
     }, session);
   }
+
+  async findOneBy(filter: Partial<User>, session?: ClientSession): Promise<User | null> {
+    return await this.transactionService.transaction(async (session) => {
+      const plainUser = (await this.UserModel.findOne(filter, undefined, { session }))?.toObject();
+      return plainUser ? plainToInstance(User, plainUser) : null;
+    }, session);
+  }
 }

@@ -1,0 +1,40 @@
+import { Logger, Module } from '@nestjs/common';
+import { AppController } from './adapters/primary/http/controllers/app.controller';
+import { IUserService } from './bussiness/ports/input/services/i-user.service';
+import { IStationService } from './bussiness/ports/input/services/i-station.service';
+import { IMeasurementService } from './bussiness/ports/input/services/i-measurement.service';
+import { MongoMeasurementRepository } from './adapters/secondary/mongo/repositories/mongo-measurement.repository';
+import { MongoStationRepository } from './adapters/secondary/mongo/repositories/mongo-station.repository';
+import { MongoUserRepository } from './adapters/secondary/mongo/repositories/mongo-user.repository';
+import { IMeasurementRepository } from './bussiness/ports/output/repositories/i-measurement.repository';
+import { IStationRepository } from './bussiness/ports/output/repositories/i-station.repository';
+import { IUserRepository } from './bussiness/ports/output/repositories/i-user.repository';
+import { MeasurementService } from './bussiness/services/measurement.service';
+import { StationService } from './bussiness/services/station.service';
+import { UserService } from './bussiness/services/user.service';
+import { AuthController } from './adapters/primary/http/controllers/auth.controller';
+import { MeasurementController } from './adapters/primary/http/controllers/measurement.controller';
+import { StationController } from './adapters/primary/http/controllers/station.controller';
+import { ConfigModule } from '@nestjs/config';
+import configuration from './configuration/configuration';
+
+@Module({
+  imports: [ConfigModule.forRoot({ isGlobal: true, load: [configuration] })],
+  controllers: [AppController, AuthController, MeasurementController, StationController],
+  providers: [
+    Logger,
+    MeasurementService,
+    { provide: IMeasurementService, useExisting: MeasurementService },
+    StationService,
+    { provide: IStationService, useExisting: StationService },
+    UserService,
+    { provide: IUserService, useExisting: UserService },
+    MongoMeasurementRepository,
+    { provide: IMeasurementRepository, useExisting: MongoMeasurementRepository },
+    MongoStationRepository,
+    { provide: IStationRepository, useExisting: MongoStationRepository },
+    MongoUserRepository,
+    { provide: IUserRepository, useExisting: MongoUserRepository },
+  ],
+})
+export class AppModule {}

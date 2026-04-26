@@ -16,10 +16,25 @@ import { AuthController } from './adapters/primary/http/controllers/auth.control
 import { MeasurementController } from './adapters/primary/http/controllers/measurement.controller';
 import { StationController } from './adapters/primary/http/controllers/station.controller';
 import { ConfigModule } from '@nestjs/config';
-import configuration from './configuration/configuration';
+import configuration from './infrastructure/configuration/configuration';
+import { MongooseModule } from '@nestjs/mongoose';
+import { User } from './bussiness/entities/user.entity';
+import { UserSchema } from './adapters/secondary/mongo/schemas/user.schema';
+import { AuthService } from './bussiness/services/auth.service';
+import { IAuthService } from './bussiness/ports/input/services/i-auth.service';
+import { JwtModule } from '@nestjs/jwt';
+import { BcryptHashService } from './adapters/secondary/bcrypt/services/bcrypt-hash.service';
+import { IHashService } from './bussiness/ports/output/services/i-hash.service';
+
+const { mongo, jwt } = configuration();
 
 @Module({
-  imports: [ConfigModule.forRoot({ isGlobal: true, load: [configuration] })],
+  imports: [
+    ConfigModule.forRoot({ isGlobal: true, load: [configuration] }),
+    MongooseModule.forRoot(mongo.uri),
+    MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
+    JwtModule.register({ global: true, secret: jwt.secret, signOptions: { expiresIn: '10d' } }),
+  ],
   controllers: [AppController, AuthController, MeasurementController, StationController],
   providers: [
     Logger,
@@ -27,8 +42,12 @@ import configuration from './configuration/configuration';
     { provide: IMeasurementService, useExisting: MeasurementService },
     StationService,
     { provide: IStationService, useExisting: StationService },
+    AuthService,
+    { provide: IAuthService, useExisting: AuthService },
     UserService,
     { provide: IUserService, useExisting: UserService },
+    BcryptHashService,
+    { provide: IHashService, useExisting: BcryptHashService },
     MongoMeasurementRepository,
     { provide: IMeasurementRepository, useExisting: MongoMeasurementRepository },
     MongoStationRepository,

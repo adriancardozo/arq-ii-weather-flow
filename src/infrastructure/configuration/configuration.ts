@@ -12,7 +12,10 @@ const configuration = {
     options: { cors: { allowedHeaders: '*' } },
     docs: { path: 'docs' },
     health_string: 'Hello World!',
+    dns_servers: process.env.DNS_SERVERS?.split(',') ?? [],
   },
+  mongo: { uri: process.env.MONGO_URI! },
+  jwt: { secret: process.env.JWT_SECRET! },
 };
 
 export type Configuration = typeof configuration;

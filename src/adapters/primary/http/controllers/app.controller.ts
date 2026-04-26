@@ -1,7 +1,7 @@
 import { Controller, Get } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation } from '@nestjs/swagger';
 import { ConfigService } from '@nestjs/config';
-import { Configuration } from 'src/configuration/configuration';
+import { Configuration } from 'src/infrastructure/configuration/configuration';
 import { VersionResponse } from './responses/version.response';
 
 @Controller()

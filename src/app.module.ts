@@ -30,6 +30,7 @@ import { ITransactionService } from './bussiness/ports/output/services/i-transac
 import { PassportModule } from '@nestjs/passport';
 import { LocalStrategy } from './adapters/primary/http/controllers/strategies/local.strategy';
 import { JwtStrategy } from './adapters/primary/http/controllers/strategies/jwt.strategy';
+import { UserController } from './adapters/primary/http/controllers/user.controller';
 
 const { mongo, jwt } = configuration();
 
@@ -41,7 +42,7 @@ const { mongo, jwt } = configuration();
     JwtModule.register({ global: true, secret: jwt.secret, signOptions: { expiresIn: '10d' } }),
     PassportModule,
   ],
-  controllers: [AppController, AuthController, MeasurementController, StationController],
+  controllers: [AppController, AuthController, MeasurementController, StationController, UserController],
   providers: [
     Logger,
     MeasurementService,

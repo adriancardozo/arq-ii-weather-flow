@@ -5,10 +5,12 @@ import {
   InternalServerErrorException,
   BadRequestException,
   Logger,
+  NotFoundException,
 } from '@nestjs/common';
 import { BaseExceptionFilter, HttpAdapterHost } from '@nestjs/core';
 import { BussinessError } from 'src/bussiness/errors/bussiness.error';
 import { UserAlreadyExistsError } from 'src/bussiness/errors/user-already-exists.error';
+import { UserNotFoundError } from 'src/bussiness/errors/user-not-found.error';
 
 @Catch(BussinessError)
 export class BussinessExceptionFilter implements ExceptionFilter {
@@ -21,6 +23,7 @@ export class BussinessExceptionFilter implements ExceptionFilter {
 
   catch(exception: BussinessError, host: ArgumentsHost) {
     try {
+      if (exception instanceof UserNotFoundError) throw new NotFoundException(exception.message);
       if (exception instanceof UserAlreadyExistsError) throw new BadRequestException(exception.message);
       throw new InternalServerErrorException();
     } catch (error) {

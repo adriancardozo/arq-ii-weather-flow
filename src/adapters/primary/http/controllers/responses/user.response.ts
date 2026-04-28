@@ -5,16 +5,16 @@ export class UserResponse {
   @ApiProperty()
   id: string;
   @ApiProperty()
-  firstName: string;
+  first_name: string;
   @ApiProperty()
-  lastName: string;
+  last_name: string;
   @ApiProperty()
   email: string;
 
   constructor(user: User) {
     this.id = user.id;
-    this.firstName = user.firstName;
-    this.lastName = user.lastName;
+    this.first_name = user.firstName;
+    this.last_name = user.lastName;
     this.email = user.email;
   }
 }

@@ -31,7 +31,7 @@ export class AuthService implements IAuthService {
   }
 
   async login(user: User): Promise<TokenOutput> {
-    return new TokenOutput(await this.jwtService.signAsync(user.loginInput()));
+    return new TokenOutput(await this.jwtService.signAsync(user.loginInput().plain()));
   }
 
   profile(user: User): User {

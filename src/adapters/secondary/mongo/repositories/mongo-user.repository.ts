@@ -31,10 +31,14 @@ export class MongoUserRepository implements IUserRepository<ClientSession> {
 
   async findOneBy(filter: Partial<User>, session?: ClientSession): Promise<User | null> {
     return await this.transactionService.transaction(async (session) => {
-      const plainUser = (
-        await this.UserModel.findOne(this.normalizedFilter(filter), undefined, { session })
-      )?.toObject();
-      return plainUser ? plainToInstance(User, plainUser) : null;
+      try {
+        const plainUser = (
+          await this.UserModel.findOne(this.normalizedFilter(filter), undefined, { session })
+        )?.toObject();
+        return plainUser ? plainToInstance(User, plainUser) : null;
+      } catch {
+        throw new UnknownError();
+      }
     }, session);
   }
 
@@ -48,17 +52,25 @@ export class MongoUserRepository implements IUserRepository<ClientSession> {
 
   async updateOne(updated: User, session?: ClientSession): Promise<User> {
     return await this.transactionService.transaction(async (session) => {
-      const filter = this.normalizedFilter({ id: updated.id });
-      const result = await this.UserModel.updateOne(filter, updated, { session, upsert: false });
-      if (result.acknowledged && result.matchedCount === 0) throw new UserNotFoundError();
-      return updated;
+      try {
+        const filter = this.normalizedFilter({ id: updated.id });
+        const result = await this.UserModel.updateOne(filter, updated, { session, upsert: false });
+        if (result.acknowledged && result.matchedCount === 0) throw new UserNotFoundError();
+        return updated;
+      } catch {
+        throw new UnknownError();
+      }
     }, session);
   }
 
   async deleteOneBy(filter: Partial<User>, session?: ClientSession): Promise<void> {
     return await this.transactionService.transaction(async (session) => {
-      const result = await this.UserModel.deleteOne(this.normalizedFilter(filter), { session });
-      if (result.acknowledged && result.deletedCount === 0) throw new UserNotFoundError();
+      try {
+        const result = await this.UserModel.deleteOne(this.normalizedFilter(filter), { session });
+        if (result.acknowledged && result.deletedCount === 0) throw new UserNotFoundError();
+      } catch {
+        throw new UnknownError();
+      }
     }, session);
   }
 

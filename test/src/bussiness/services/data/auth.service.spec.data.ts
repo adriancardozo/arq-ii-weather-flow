@@ -19,16 +19,20 @@ export const unknownError = new UnknownError();
 
 export const registeredUserAccessToken = 'Bearer access.token';
 
-export const registeredUserLoginInput: LoginInput = mock(LoginInput);
+export const registeredUserLoginInput: jest.Mocked<LoginInput> = mock(LoginInput);
+
+export const plainRegisteredUserLoginInput = { id: '1234abcd', email: 'registered@mail.com' };
 
 export const loginUser: jest.Mocked<User> = mock(User);
 
 export const loginAccessToken = 'Bearer access.token';
 
-export const loginUserLoginInput: LoginInput = mock(LoginInput);
+export const loginUserLoginInput: jest.Mocked<LoginInput> = mock(LoginInput);
 
 export const toValidateEmail = 'juanperez@mail.com';
 
 export const toValidatePassword = 'Juanperez1234!';
 
 export const toValidateFoundUser: jest.Mocked<User> = mock(User);
+
+export const plainLoginUserLoginInput = { id: '1234abcd', email: toValidateEmail };

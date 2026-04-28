@@ -20,6 +20,8 @@ import {
   toValidateEmail,
   toValidatePassword,
   toValidateFoundUser,
+  plainLoginUserLoginInput,
+  plainRegisteredUserLoginInput,
 } from './data/auth.service.spec.data';
 import { UserService } from 'src/bussiness/services/user.service';
 import { JwtService } from '@nestjs/jwt';
@@ -60,6 +62,7 @@ describe('AuthService', () => {
       userService.create.mockResolvedValue(registeredUser);
       jwtService.signAsync.mockResolvedValue(registeredUserAccessToken);
       registeredUser.loginInput.mockReturnValue(registeredUserLoginInput);
+      registeredUserLoginInput.plain.mockReturnValue(plainRegisteredUserLoginInput);
     });
 
     it('should return registered user access token', async () => {
@@ -69,7 +72,7 @@ describe('AuthService', () => {
 
     it('should get registered user access token', async () => {
       await authService.register(createUserInput, session);
-      expect(jwtService.signAsync).toHaveBeenCalledWith(registeredUserLoginInput);
+      expect(jwtService.signAsync).toHaveBeenCalledWith(plainRegisteredUserLoginInput);
     });
 
     it('should get registered user login input', async () => {
@@ -115,6 +118,7 @@ describe('AuthService', () => {
     beforeEach(() => {
       jwtService.signAsync.mockResolvedValue(loginAccessToken);
       loginUser.loginInput.mockReturnValue(loginUserLoginInput);
+      loginUserLoginInput.plain.mockReturnValue(plainLoginUserLoginInput);
     });
 
     it('should return user access token', async () => {
@@ -124,7 +128,7 @@ describe('AuthService', () => {
 
     it('should get user access token', async () => {
       await authService.login(loginUser);
-      expect(jwtService.signAsync).toHaveBeenCalledWith(loginUserLoginInput);
+      expect(jwtService.signAsync).toHaveBeenCalledWith(plainLoginUserLoginInput);
     });
 
     it('should get user login input', async () => {

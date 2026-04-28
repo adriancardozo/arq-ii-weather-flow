@@ -15,13 +15,16 @@ import {
   editedUser,
   editUserId,
   editUserInput,
-  foundUser,
+  foundByEmailUser,
+  foundByIdUser,
+  foundUsers,
   hash,
   hashedCreateUserInput,
   notFoundError,
   session,
   toEditUser,
   toFindEmail,
+  toFindId,
   unknownError,
   user,
 } from './data/user.service.spec.data';
@@ -44,6 +47,83 @@ describe('UserService', () => {
     transactionService = app.get<jest.Mocked<ITransactionService>>(ITransactionService);
     hashService = app.get<jest.Mocked<IHashService>>(IHashService);
     userRepository = app.get<jest.Mocked<IUserRepository>>(IUserRepository);
+  });
+
+  describe('GetAll', () => {
+    beforeEach(() => {
+      userRepository.find.mockResolvedValue(foundUsers);
+    });
+
+    it('should return found users', async () => {
+      const result = await userService.getAll(session);
+      expect(result).toEqual(foundUsers);
+    });
+
+    it('should find users', async () => {
+      await userService.getAll(session);
+      expect(userRepository.find).toHaveBeenCalledWith({}, session);
+    });
+
+    it('should execute in transaction', async () => {
+      const transaction = jest.spyOn(transactionService, 'transaction');
+      await userService.getAll(session);
+      expect(transaction).toHaveBeenCalled();
+    });
+
+    describe('Find users error', () => {
+      beforeEach(() => {
+        userRepository.find.mockRejectedValue(unknownError);
+      });
+
+      it('should fail if error on find users', async () => {
+        const result = userService.getAll(session);
+        await expect(result).rejects.toEqual(unknownError);
+      });
+    });
+  });
+
+  describe('Get', () => {
+    beforeEach(() => {
+      userRepository.findOneByOrFail.mockResolvedValue(foundByIdUser);
+    });
+
+    it('should return found user', async () => {
+      const result = await userService.getById(toFindId, session);
+      expect(result).toEqual(foundByIdUser);
+    });
+
+    it('should find user', async () => {
+      await userService.getById(toFindId, session);
+      expect(userRepository.findOneByOrFail).toHaveBeenCalledWith({ id: toFindId }, session);
+    });
+
+    it('should execute in transaction', async () => {
+      const transaction = jest.spyOn(transactionService, 'transaction');
+      await userService.getById(toFindId, session);
+      expect(transaction).toHaveBeenCalled();
+    });
+
+    describe('User not found', () => {
+      beforeEach(() => {
+        userRepository.findOneByOrFail.mockRejectedValue(notFoundError);
+      });
+
+      it('should fail if user not found', async () => {
+        const result = userService.getById(toFindId, session);
+        await expect(result).rejects.toEqual(notFoundError);
+      });
+    });
+
+    describe('Find user error', () => {
+      beforeEach(() => {
+        userRepository.findOneByOrFail.mockRejectedValue(unknownError);
+      });
+
+      it('should fail if error on find user', async () => {
+        const result = userService.getById(toFindId, session);
+        await expect(result).rejects.toEqual(unknownError);
+      });
+    });
   });
 
   describe('Create', () => {
@@ -246,12 +326,12 @@ describe('UserService', () => {
 
   describe('FindOneByEmail', () => {
     beforeEach(() => {
-      userRepository.findOneBy.mockResolvedValue(foundUser);
+      userRepository.findOneBy.mockResolvedValue(foundByEmailUser);
     });
 
     it('should return found user', async () => {
       const result = await userService.findOneByEmail(toFindEmail, session);
-      expect(result).toEqual(foundUser);
+      expect(result).toEqual(foundByEmailUser);
     });
 
     it('should find user', async () => {

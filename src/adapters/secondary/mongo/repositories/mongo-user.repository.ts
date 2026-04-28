@@ -50,6 +50,19 @@ export class MongoUserRepository implements IUserRepository<ClientSession> {
     }, session);
   }
 
+  async find(filter: Partial<User>, session?: ClientSession): Promise<Array<User>> {
+    return await this.transactionService.transaction(async (session) => {
+      try {
+        const plainUsers = (
+          await this.UserModel.find(this.normalizedFilter(filter), undefined, { session })
+        ).map((result) => result.toObject());
+        return plainToInstance(User, plainUsers);
+      } catch {
+        throw new UnknownError();
+      }
+    }, session);
+  }
+
   async updateOne(updated: User, session?: ClientSession): Promise<User> {
     return await this.transactionService.transaction(async (session) => {
       try {

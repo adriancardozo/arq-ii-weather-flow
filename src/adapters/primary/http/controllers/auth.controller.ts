@@ -39,7 +39,7 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @ApiOkResponse({ type: UserResponse })
   @Get('profile')
-  profile(@Request() { user }: UserRequest) {
+  profile(@Request() { user }: UserRequest): UserResponse {
     return new UserResponse(this.authService.profile(user));
   }
 }

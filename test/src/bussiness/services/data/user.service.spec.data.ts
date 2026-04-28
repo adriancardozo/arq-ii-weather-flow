@@ -45,4 +45,10 @@ export const editedUser: jest.Mocked<User> = mock(User);
 
 export const toFindEmail = 'juanperez@mail.com';
 
-export const foundUser: jest.Mocked<User> = mock(User);
+export const foundByEmailUser: jest.Mocked<User> = mock(User);
+
+export const foundByIdUser: jest.Mocked<User> = mock(User);
+
+export const toFindId = '1234abcd';
+
+export const foundUsers: Array<jest.Mocked<User>> = [mock(User), mock(User), mock(User)];

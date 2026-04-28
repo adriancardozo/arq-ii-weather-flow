@@ -4,6 +4,12 @@ import { EditUserInput } from 'src/bussiness/ports/input/services/dtos/input/edi
 import { IUserService } from 'src/bussiness/ports/input/services/i-user.service';
 
 export class MockUserService implements IUserService {
+  getAll(): Promise<Array<User>> {
+    throw new Error('Method not implemented.');
+  }
+  getById(id: string): Promise<User> {
+    throw new Error('Method not implemented.');
+  }
   create(register: CreateUserInput): Promise<User> {
     throw new Error('Method not implemented.');
   }

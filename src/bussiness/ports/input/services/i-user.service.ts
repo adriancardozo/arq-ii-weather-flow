@@ -10,4 +10,8 @@ export abstract class IUserService {
   abstract edit(id: string, input: EditUserInput): Promise<User>;
 
   abstract delete(id: string): Promise<User>;
+
+  abstract getAll(): Promise<Array<User>>;
+
+  abstract getById(id: string): Promise<User>;
 }

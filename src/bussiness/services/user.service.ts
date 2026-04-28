@@ -15,6 +15,18 @@ export class UserService<Session = any> implements IUserService {
     private readonly transactionService: ITransactionService,
   ) {}
 
+  async getAll(session?: Session): Promise<Array<User>> {
+    return await this.transactionService.transaction(async (session) => {
+      return await this.userRepository.find({}, session);
+    }, session);
+  }
+
+  async getById(id: string, session?: Session): Promise<User> {
+    return await this.transactionService.transaction(async (session) => {
+      return await this.userRepository.findOneByOrFail({ id }, session);
+    }, session);
+  }
+
   async create(input: CreateUserInput, session?: Session): Promise<User> {
     return await this.transactionService.transaction(async (session) => {
       const password = await this.hashService.hash(input.password);

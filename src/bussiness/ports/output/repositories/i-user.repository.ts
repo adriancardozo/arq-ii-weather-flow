@@ -11,4 +11,6 @@ export abstract class IUserRepository<Session = any> {
   abstract deleteOneBy(filter: Partial<User>, session?: Session): Promise<void>;
 
   abstract updateOne(updated: User, session?: Session): Promise<User>;
+
+  abstract find(filter: Partial<User>, session?: Session): Promise<Array<User>>;
 }

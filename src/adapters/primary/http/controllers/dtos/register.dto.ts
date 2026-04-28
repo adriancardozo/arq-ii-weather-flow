@@ -23,11 +23,6 @@ export class RegisterDto {
   password: string;
 
   toInput(): CreateUserInput {
-    return {
-      firstName: this.first_name,
-      lastName: this.last_name,
-      email: this.email,
-      password: this.password,
-    };
+    return new CreateUserInput(this.first_name, this.last_name, this.email, this.password);
   }
 }

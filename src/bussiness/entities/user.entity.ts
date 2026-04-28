@@ -1,4 +1,5 @@
 import { EditUserInput } from '../ports/input/services/dtos/input/edit-user.input';
+import { LoginInput } from '../ports/input/services/dtos/input/login.input';
 
 export class User {
   id: string;
@@ -18,5 +19,9 @@ export class User {
     this.firstName = firstName ?? this.firstName;
     this.lastName = lastName ?? this.lastName;
     this.email = email ?? this.email;
+  }
+
+  loginInput(): LoginInput {
+    return new LoginInput(this.id, this.email);
   }
 }

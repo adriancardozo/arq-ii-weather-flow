@@ -18,10 +18,6 @@ export class EditUserDto {
   email?: string;
 
   toInput(): EditUserInput {
-    return {
-      firstName: this.first_name,
-      lastName: this.last_name,
-      email: this.email,
-    };
+    return new EditUserInput(this.first_name, this.last_name, this.email);
   }
 }

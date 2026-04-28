@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { IAuthService } from '../ports/input/services/i-auth.service';
 import { CreateUserInput } from '../ports/input/services/dtos/input/create-user.input';
 import { TokenOutput } from '../ports/input/services/dtos/output/token.output';
-import { LoginInput } from '../ports/input/services/dtos/input/login.input';
 import { JwtService } from '@nestjs/jwt';
 import { ITransactionService } from '../ports/output/services/i-transaction.service';
 import { UserService } from './user.service';
@@ -18,7 +17,7 @@ export class AuthService implements IAuthService {
     private readonly hashService: IHashService,
   ) {}
 
-  async validateUser(email: string, password: string): Promise<User | null> {
+  async validate(email: string, password: string): Promise<User | null> {
     const user = await this.userService.findOneByEmail(email);
     if (user && this.match(password, user.password)) return user;
     return null;
@@ -31,9 +30,8 @@ export class AuthService implements IAuthService {
     }, session);
   }
 
-  async login({ id, email }: LoginInput): Promise<TokenOutput> {
-    const payload = { id, email };
-    return { accessToken: await this.jwtService.signAsync(payload) };
+  async login(user: User): Promise<TokenOutput> {
+    return new TokenOutput(await this.jwtService.signAsync(user.loginInput()));
   }
 
   profile(user: User): User {

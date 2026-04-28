@@ -1,3 +1,3 @@
 export class TokenOutput {
-  accessToken: string;
+  constructor(public accessToken: string) {}
 }

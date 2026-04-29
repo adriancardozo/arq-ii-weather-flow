@@ -11,10 +11,10 @@ export class UserResponse {
   @ApiProperty()
   email: string;
   @ApiProperty({ type: 'string', isArray: true })
-  stations: Array<string>;
+  stations: Array<string | null>;
 
   constructor(user: User) {
-    this.id = user.id;
+    this.id = user.id!;
     this.first_name = user.firstName;
     this.last_name = user.lastName;
     this.email = user.email;

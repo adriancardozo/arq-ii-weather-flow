@@ -9,5 +9,5 @@ export const UserSchema = new Schema(
     password: String,
     stations: [{ type: Schema.Types.ObjectId, ref: Station.name }],
   },
-  { toJSON: { virtuals: true }, toObject: { virtuals: true }, selectPopulatedPaths: true },
+  { toJSON: { virtuals: true }, toObject: { virtuals: true } },
 );

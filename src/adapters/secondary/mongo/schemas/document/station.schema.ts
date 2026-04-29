@@ -12,7 +12,7 @@ export const StationSchema = new Schema(
     state: { type: String, enum: ['active', 'inactive'], default: 'active' },
     owner: { type: Schema.Types.ObjectId, ref: User.name },
   },
-  { toJSON: { virtuals: true }, toObject: { virtuals: true }, selectPopulatedPaths: true },
+  { toJSON: { virtuals: true }, toObject: { virtuals: true } },
 );
 
 StationSchema.index({ location: '2dsphere' });

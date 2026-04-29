@@ -1,6 +1,6 @@
 export class LoginInput {
   constructor(
-    public id: string,
+    public id: string | null,
     public email: string,
   ) {}
 

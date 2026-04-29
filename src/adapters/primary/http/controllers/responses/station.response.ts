@@ -14,10 +14,10 @@ export class StationResponse {
   @ApiProperty()
   state: 'active' | 'inactive';
   @ApiProperty()
-  owner_id: string;
+  owner_id: string | null;
 
   constructor(station: Station) {
-    this.id = station.id;
+    this.id = station.id!;
     this.name = station.name;
     this.location = new LocationResponse(station.location);
     this.sensor_model = station.sensorModel;

@@ -10,6 +10,7 @@ import { BussinessError } from 'src/bussiness/errors/bussiness.error';
 const {
   ObjectId,
   BSON: { BSONError },
+  MongoServerError,
 } = mongo;
 
 export abstract class MongoRepository<
@@ -23,6 +24,7 @@ export abstract class MongoRepository<
     protected readonly EntityModel: Model<Entity>,
     protected readonly transactionService: MongoTransactionService,
     protected readonly relations: Array<string> = [],
+    protected readonly AlreadyExistsError?: Type<BussinessError>,
   ) {}
 
   async save(
@@ -38,6 +40,9 @@ export abstract class MongoRepository<
         return plainToInstance(this.EntityClass, plainEntity);
       } catch (error) {
         await onError(error);
+        if (this.AlreadyExistsError && error instanceof MongoServerError && error.code === 11000) {
+          throw new this.AlreadyExistsError();
+        }
         throw new UnknownError();
       }
     }, session);
@@ -100,13 +105,24 @@ export abstract class MongoRepository<
         const schema = { ...updated, ...this.relationsSchema(updated) };
         const filter = this.normalizedFilter({ id: updated.id });
         const result = await this.EntityModel.updateOne(filter, schema, { session, upsert: false });
-        if (result.acknowledged && result.matchedCount === 0) throw new this.NotFoundErrorClass();
+        if (!result.acknowledged && result.matchedCount === 0) throw new this.NotFoundErrorClass();
         return updated;
       } catch (error) {
+        console.log(error);
         await onError(error);
         if (error instanceof BSONError) throw new this.NotFoundErrorClass();
         throw new UnknownError();
       }
+    }, session);
+  }
+
+  async updateMany(
+    entities: Array<Entity>,
+    session?: ClientSession,
+    onError: (error: any) => Promise<void> = (error) => Promise.resolve(undefined),
+  ): Promise<Array<Entity>> {
+    return await this.transactionService.transaction(async (session) => {
+      return Promise.all(entities.map(async (entity) => await this.updateOne(entity, session, onError)));
     }, session);
   }
 
@@ -134,7 +150,16 @@ export abstract class MongoRepository<
     return { ...(id ? { _id: new ObjectId(id) } : {}), ...rest };
   }
 
-  protected relationsSchema<T = any>(updated: Entity): T {
-    return {} as T;
+  private relationsSchema(updated: Entity) {
+    const updatedRelations = this.relations.filter((relation) => !!updated[relation]);
+    const relationIds = {};
+    updatedRelations.forEach(
+      (relation) =>
+        (relationIds[relation] =
+          updated[relation] instanceof Array
+            ? updated[relation].map(({ id }) => id)
+            : updated[relation].id),
+    );
+    return relationIds;
   }
 }

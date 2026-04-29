@@ -2,6 +2,7 @@ import { EditStationInput } from '../ports/input/services/dtos/input/edit-statio
 import { IEntity } from './i.entity';
 import { User } from './user.entity';
 import { Location } from '../value-objects/location.value-object';
+import { Measurement } from './measurement.entity';
 
 export class Station extends IEntity<EditStationInput> {
   name: string;
@@ -9,6 +10,8 @@ export class Station extends IEntity<EditStationInput> {
   sensorModel: string;
   state: 'active' | 'inactive' = 'active';
   owner: User;
+  subscribers: Array<User> = [];
+  measurements: Array<Measurement>;
 
   constructor(id: string);
   constructor(
@@ -43,6 +46,10 @@ export class Station extends IEntity<EditStationInput> {
     if (location) this.location.edit(location);
     this.sensorModel = sensorModel ?? this.sensorModel;
     this.state = state ?? this.state;
-    if (owner?.id) this.owner = new User(owner.id);
+    if (owner?.id) this.setOwner(new User(owner.id));
+  }
+
+  setOwner(owner: User | null): void {
+    this.owner = owner ?? new User(null);
   }
 }

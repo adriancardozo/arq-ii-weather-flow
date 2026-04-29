@@ -10,6 +10,34 @@ export class Station extends IEntity<EditStationInput> {
   state: 'active' | 'inactive' = 'active';
   owner: User;
 
+  constructor(id: string);
+  constructor(
+    id: string,
+    name: string,
+    location: Location,
+    sensorModel: string,
+    owner: User,
+    state: 'active' | 'inactive',
+  );
+  constructor(
+    id: string,
+    name?: string,
+    location?: Location,
+    sensorModel?: string,
+    owner?: User,
+    state: 'active' | 'inactive' = 'active',
+  ) {
+    super();
+    this.id = id;
+    if (name && location && sensorModel && owner) {
+      this.name = name;
+      this.location = location;
+      this.sensorModel = sensorModel;
+      this.owner = owner;
+      this.state = state;
+    }
+  }
+
   edit({ name, location, sensorModel, state, owner }: EditStationInput) {
     this.name = name ?? this.name;
     if (location) this.location.edit(location);

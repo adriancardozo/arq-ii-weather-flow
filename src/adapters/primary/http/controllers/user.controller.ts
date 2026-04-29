@@ -19,6 +19,7 @@ import { UserResponse } from './responses/user.response';
 import { EditUserDto } from './dtos/edit-user.dto';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { IdDto } from './dtos/id.dto';
+import { AlertsResponse } from './responses/alerts.response';
 
 @Controller('user')
 @UsePipes(VALIDATION_PIPE)
@@ -72,5 +73,14 @@ export class UserController {
   @Patch(':id')
   async edit(@Param() param: IdDto, @Body() dto: EditUserDto): Promise<UserResponse> {
     return new UserResponse(await this.userService.edit(param.id, dto.toInput()));
+  }
+
+  @ApiOperation({ summary: 'Get user alerts' })
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @ApiOkResponse({ type: AlertsResponse })
+  @Get(':id/alert')
+  async alerts(@Param() param: IdDto): Promise<AlertsResponse> {
+    return new AlertsResponse(await this.userService.getById(param.id));
   }
 }

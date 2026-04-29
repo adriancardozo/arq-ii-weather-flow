@@ -10,11 +10,14 @@ export class UserResponse {
   last_name: string;
   @ApiProperty()
   email: string;
+  @ApiProperty({ type: 'string', isArray: true })
+  stations: Array<string>;
 
   constructor(user: User) {
     this.id = user.id;
     this.first_name = user.firstName;
     this.last_name = user.lastName;
     this.email = user.email;
+    this.stations = user.stations?.map((station) => station.id) ?? null;
   }
 }

@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Post, Request, UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiOkResponse, ApiOperation } from '@nestjs/swagger';
 import { TokenResponse } from './responses/token.response';
-import { RegisterDto } from './dtos/register.dto';
+import { CreateUserDto } from './dtos/create-user.dto';
 import { IAuthService } from 'src/bussiness/ports/input/services/i-auth.service';
 import { VALIDATION_PIPE } from 'src/infrastructure/validation/validation.pipe';
 import { BussinessExceptionFilter } from './filters/bussiness-error.filter';
@@ -19,10 +19,10 @@ export class AuthController {
 
   @ApiOperation({ summary: 'Register' })
   @ApiOkResponse({ type: TokenResponse })
-  @ApiBody({ type: RegisterDto })
+  @ApiBody({ type: CreateUserDto })
   @Post('register')
-  async register(@Body() registerDto: RegisterDto): Promise<TokenResponse> {
-    return new TokenResponse(await this.authService.register(registerDto.toInput()));
+  async register(@Body() dto: CreateUserDto): Promise<TokenResponse> {
+    return new TokenResponse(await this.authService.register(dto.toInput()));
   }
 
   @ApiOperation({ summary: 'Login' })

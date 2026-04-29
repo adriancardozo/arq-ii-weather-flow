@@ -57,4 +57,13 @@ export class Station extends IEntity<EditStationInput> {
     this.subscribers = [...this.subscribers, user];
     user.subscribe(this);
   }
+
+  addMeasurement(measurement: Measurement) {
+    this.measurements = [...this.measurements, measurement];
+    if (measurement.alert) this.notifyAlert(measurement);
+  }
+
+  private notifyAlert(measurement: Measurement) {
+    this.subscribers?.forEach((subscriber) => subscriber.notifyAlert(measurement));
+  }
 }

@@ -47,4 +47,8 @@ export class User extends IEntity<EditUserInput> {
   subscribe(station: Station) {
     this.subscriptions = [...this.subscriptions, station];
   }
+
+  notifyAlert(alert: Measurement): void {
+    this.alerts = [...this.alerts, alert];
+  }
 }

@@ -6,24 +6,33 @@ import { Measurement } from '../entities/measurement.entity';
 import { EditMeasurementInput } from '../ports/input/services/dtos/input/edit-measurement.input';
 import { RegisterMeasurementInput } from '../ports/input/services/dtos/input/register-measurement.input';
 import { ITransactionService } from '../ports/output/services/i-transaction.service';
-import { Station } from '../entities/station.entity';
+import { IUserRepository } from '../ports/output/repositories/i-user.repository';
+import { IStationRepository } from '../ports/output/repositories/i-station.repository';
 
 @Injectable()
 export class MeasurementService<Session = any>
   extends Service<Measurement, RegisterMeasurementInput | Measurement, EditMeasurementInput, Session>
   implements IMeasurementService
 {
-  constructor(measurementRepository: IMeasurementRepository, transactionService: ITransactionService) {
+  constructor(
+    measurementRepository: IMeasurementRepository,
+    transactionService: ITransactionService,
+    private readonly userRepository: IUserRepository,
+    private readonly stationRepository: IStationRepository,
+  ) {
     super(measurementRepository, transactionService);
   }
 
   override async create(input: RegisterMeasurementInput, session?: Session): Promise<Measurement> {
     return await this.transactionService.transaction(async (session) => {
-      const station = new Station(input.station);
+      const station = await this.stationRepository.findOneByOrFail({ id: input.station }, session);
       const measurement = await this.repository.save(
         new Measurement(undefined, input.pressure, input.temperature, input.humidity, station),
         session,
       );
+      station.addMeasurement(measurement);
+      await this.stationRepository.updateOne(station, session);
+      await this.userRepository.updateMany(station.subscribers);
       return measurement;
     }, session);
   }

@@ -20,6 +20,7 @@ export class MongoStationRepository
     super(StationObject, Station, StationNotFoundError, StationModel, transactionService, [
       'owner',
       'subscribers',
+      'measurements',
     ]);
   }
 }

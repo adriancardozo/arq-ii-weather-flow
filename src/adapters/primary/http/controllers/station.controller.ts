@@ -36,7 +36,7 @@ export class StationController {
     return stations.map((station) => new StationResponse(station));
   }
 
-  @ApiOperation({ summary: 'Get an station' })
+  @ApiOperation({ summary: 'Get a station' })
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @ApiOkResponse({ type: StationResponse })
@@ -45,7 +45,7 @@ export class StationController {
     return new StationResponse(await this.stationService.getById(param.id));
   }
 
-  @ApiOperation({ summary: 'Create an station' })
+  @ApiOperation({ summary: 'Create a station' })
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @ApiBody({ type: CreateStationDto })
@@ -55,7 +55,7 @@ export class StationController {
     return new StationResponse(await this.stationService.create(dto.toInput()));
   }
 
-  @ApiOperation({ summary: 'Delete an station' })
+  @ApiOperation({ summary: 'Delete a station' })
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @ApiOkResponse({ type: StationResponse })
@@ -64,7 +64,7 @@ export class StationController {
     return new StationResponse(await this.stationService.delete(param.id));
   }
 
-  @ApiOperation({ summary: 'Edit an station' })
+  @ApiOperation({ summary: 'Edit a station' })
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @ApiBody({ type: EditStationDto })

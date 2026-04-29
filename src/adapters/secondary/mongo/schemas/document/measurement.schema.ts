@@ -7,7 +7,7 @@ export const MeasurementSchema = new Schema(
     alert: Boolean,
     alertType: {
       type: String,
-      enum: ['Ninguna', 'Calor extremo', 'Helada', 'Tormenta'],
+      enum: ['Ninguna', 'Calor extremo', 'Helada', 'Tormenta', 'Humedad crítica'],
       default: 'Ninguna',
     },
     pressure: Number,

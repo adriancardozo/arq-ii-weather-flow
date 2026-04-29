@@ -3,7 +3,7 @@ import { IEntity } from 'src/bussiness/entities/i.entity';
 import { IRepository } from 'src/bussiness/ports/output/repositories/i.respository';
 import { MongoTransactionService } from '../services/mongo-transaction.service';
 import { plainToInstance } from 'class-transformer';
-import { Type } from '@nestjs/common';
+import { Logger, Type } from '@nestjs/common';
 import { UnknownError } from 'src/bussiness/errors/unknown.error';
 import { BussinessError } from 'src/bussiness/errors/bussiness.error';
 
@@ -18,7 +18,10 @@ export abstract class MongoRepository<
   CreateInput,
   EditInput,
 > implements IRepository<Entity, CreateInput, EditInput, ClientSession> {
+  private logger: Logger = new Logger(MongoRepository.name);
+
   constructor(
+    protected readonly TransformEntityClass: Type<Entity>,
     protected readonly EntityClass: Type<Entity>,
     protected readonly NotFoundErrorClass: Type<BussinessError>,
     protected readonly EntityModel: Model<Entity>,
@@ -34,11 +37,14 @@ export abstract class MongoRepository<
   ): Promise<Entity> {
     return await this.transactionService.transaction(async (session) => {
       try {
-        const result = await new this.EntityModel(input).save({ session });
+        let saveInput = input;
+        if (input instanceof this.EntityClass) saveInput = { ...input, ...this.relationsSchema(input) };
+        const result = await new this.EntityModel(saveInput).save({ session });
         const populated = await result.populate(this.relations);
         const plainEntity = populated.toObject();
-        return plainToInstance(this.EntityClass, plainEntity);
+        return plainToInstance(this.TransformEntityClass, plainEntity);
       } catch (error) {
+        this.logger.error(error);
         await onError(error);
         if (this.AlreadyExistsError && error instanceof MongoServerError && error.code === 11000) {
           throw new this.AlreadyExistsError();
@@ -60,8 +66,9 @@ export abstract class MongoRepository<
         });
         const populated = await result?.populate(this.relations);
         const plainEntity = populated?.toObject();
-        return plainEntity ? plainToInstance(this.EntityClass, plainEntity) : null;
+        return plainEntity ? plainToInstance(this.TransformEntityClass, plainEntity) : null;
       } catch (error) {
+        this.logger.error(error);
         await onError(error);
         if (error instanceof BSONError) return null;
         throw new UnknownError();
@@ -87,8 +94,9 @@ export abstract class MongoRepository<
         const result = await this.EntityModel.find(this.normalizedFilter(filter), undefined, { session });
         const populated = await Promise.all(result.map((result) => result.populate(this.relations)));
         const plainEntities = populated.map((result) => result.toObject());
-        return plainToInstance(this.EntityClass, plainEntities);
+        return plainToInstance(this.TransformEntityClass, plainEntities);
       } catch (error) {
+        this.logger.error(error);
         await onError(error);
         throw new UnknownError();
       }
@@ -108,7 +116,7 @@ export abstract class MongoRepository<
         if (!result.acknowledged && result.matchedCount === 0) throw new this.NotFoundErrorClass();
         return updated;
       } catch (error) {
-        console.log(error);
+        this.logger.error(error);
         await onError(error);
         if (error instanceof BSONError) throw new this.NotFoundErrorClass();
         throw new UnknownError();
@@ -136,6 +144,7 @@ export abstract class MongoRepository<
         const result = await this.EntityModel.deleteOne(this.normalizedFilter(filter), { session });
         if (result.acknowledged && result.deletedCount === 0) throw new this.NotFoundErrorClass();
       } catch (error) {
+        this.logger.error(error);
         await onError(error);
         if (error instanceof BSONError) throw new this.NotFoundErrorClass();
         throw new UnknownError();

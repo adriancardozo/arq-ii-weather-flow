@@ -19,6 +19,6 @@ export class MongoStationRepository
     @InjectModel(User.name) private UserModel: Model<User>,
     transactionService: MongoTransactionService,
   ) {
-    super(StationObject, StationNotFoundError, StationModel, transactionService, ['owner']);
+    super(StationObject, Station, StationNotFoundError, StationModel, transactionService, ['owner']);
   }
 }

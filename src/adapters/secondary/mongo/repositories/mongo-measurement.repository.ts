@@ -10,13 +10,15 @@ import { MeasurementNotFoundError } from 'src/bussiness/errors/measurement-not-f
 import { Measurement as MeasurementObject } from '../schemas/object/measurement-object.schema';
 
 export class MongoMeasurementRepository
-  extends MongoRepository<Measurement, RegisterMeasurementInput, EditMeasurementInput>
+  extends MongoRepository<Measurement, Measurement | RegisterMeasurementInput, EditMeasurementInput>
   implements IMeasurementRepository
 {
   constructor(
     @InjectModel(Measurement.name) MeasurementModel: Model<Measurement>,
     transactionService: MongoTransactionService,
   ) {
-    super(MeasurementObject, MeasurementNotFoundError, MeasurementModel, transactionService, ['station']);
+    super(MeasurementObject, Measurement, MeasurementNotFoundError, MeasurementModel, transactionService, [
+      'station',
+    ]);
   }
 }

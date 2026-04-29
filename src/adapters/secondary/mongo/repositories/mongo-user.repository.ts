@@ -22,6 +22,7 @@ export class MongoUserRepository
   ) {
     super(
       UserObject,
+      User,
       UserNotFoundError,
       UserModel,
       transactionService,

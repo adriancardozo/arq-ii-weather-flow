@@ -10,7 +10,7 @@ export class User extends IEntity<EditUserInput> {
   email: string;
   password: string;
   stations: Array<Station> = [];
-  publishers: Array<Station> = [];
+  subscriptions: Array<Station> = [];
   alerts: Array<Measurement> = [];
 
   constructor(id: string | null);
@@ -42,5 +42,9 @@ export class User extends IEntity<EditUserInput> {
 
   removeStation(id: string) {
     this.stations = this.stations?.filter((station) => station?.id !== id) ?? [];
+  }
+
+  subscribe(station: Station) {
+    this.subscriptions = [...this.subscriptions, station];
   }
 }

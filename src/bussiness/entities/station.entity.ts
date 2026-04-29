@@ -52,4 +52,9 @@ export class Station extends IEntity<EditStationInput> {
   setOwner(owner: User | null): void {
     this.owner = owner ?? new User(null);
   }
+
+  subscribe(user: User) {
+    this.subscribers = [...this.subscribers, user];
+    user.subscribe(this);
+  }
 }

@@ -12,4 +12,6 @@ export abstract class IStationService {
   abstract delete(id: string): Promise<Station>;
 
   abstract create(input: CreateStationInput): Promise<Station>;
+
+  abstract subscribe(id: string, user_id: string): Promise<Station>;
 }

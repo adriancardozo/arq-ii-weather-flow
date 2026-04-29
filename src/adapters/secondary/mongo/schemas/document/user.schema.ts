@@ -8,6 +8,7 @@ export const UserSchema = new Schema(
     email: { type: String, unique: true },
     password: String,
     stations: [{ type: Schema.Types.ObjectId, ref: Station.name }],
+    subscriptions: [{ type: Schema.Types.ObjectId, ref: Station.name }],
   },
   { toJSON: { virtuals: true }, toObject: { virtuals: true } },
 );

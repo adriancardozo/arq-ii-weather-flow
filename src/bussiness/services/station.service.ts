@@ -58,4 +58,14 @@ export class StationService<Session = any>
       return station;
     }, session);
   }
+
+  async subscribe(id: string, userId: string, session?: Session): Promise<Station> {
+    return await this.transactionService.transaction(async (session) => {
+      const station = await this.repository.findOneByOrFail({ id }, session);
+      const user = await this.userRepository.findOneByOrFail({ id: userId }, session);
+      station.subscribe(user);
+      await this.userRepository.updateOne(user, session);
+      return await this.repository.updateOne(station, session);
+    }, session);
+  }
 }

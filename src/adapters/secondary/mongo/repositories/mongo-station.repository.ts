@@ -7,7 +7,6 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { MongoTransactionService } from '../services/mongo-transaction.service';
 import { StationNotFoundError } from 'src/bussiness/errors/station-not-found.error';
-import { User } from 'src/bussiness/entities/user.entity';
 import { Station as StationObject } from '../schemas/object/station-object.schema';
 
 export class MongoStationRepository
@@ -16,9 +15,11 @@ export class MongoStationRepository
 {
   constructor(
     @InjectModel(Station.name) StationModel: Model<Station>,
-    @InjectModel(User.name) private UserModel: Model<User>,
     transactionService: MongoTransactionService,
   ) {
-    super(StationObject, Station, StationNotFoundError, StationModel, transactionService, ['owner']);
+    super(StationObject, Station, StationNotFoundError, StationModel, transactionService, [
+      'owner',
+      'subscribers',
+    ]);
   }
 }

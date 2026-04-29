@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   Post,
+  Put,
   UseFilters,
   UseGuards,
   UsePipes,
@@ -19,6 +20,8 @@ import { IStationService } from 'src/bussiness/ports/input/services/i-station.se
 import { StationResponse } from './responses/station.response';
 import { CreateStationDto } from './dtos/create-station.dto';
 import { EditStationDto } from './dtos/edit-station.dto';
+import { SubscribeDto } from './dtos/subscribe.dto';
+import { SubscribeResponse } from './responses/subscribe.response';
 
 @Controller('station')
 @UsePipes(VALIDATION_PIPE)
@@ -72,5 +75,14 @@ export class StationController {
   @Patch(':id')
   async edit(@Param() param: IdDto, @Body() dto: EditStationDto): Promise<StationResponse> {
     return new StationResponse(await this.stationService.edit(param.id, dto.toInput()));
+  }
+
+  @ApiOperation({ summary: 'Subscribe to station' })
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @ApiOkResponse({ type: SubscribeResponse })
+  @Put(':id/subscribe/:user_id')
+  async subscribe(@Param() param: SubscribeDto): Promise<SubscribeResponse> {
+    return new SubscribeResponse(await this.stationService.subscribe(param.id, param.user_id));
   }
 }

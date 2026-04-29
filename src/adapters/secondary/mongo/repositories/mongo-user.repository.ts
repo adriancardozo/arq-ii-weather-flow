@@ -9,24 +9,19 @@ import { UserNotFoundError } from 'src/bussiness/errors/user-not-found.error';
 import { MongoRepository } from './mongo.repository';
 import { EditUserInput } from 'src/bussiness/ports/input/services/dtos/input/edit-user.input';
 import { User as UserObject } from '../schemas/object/user-object.schema';
-import { Station } from 'src/bussiness/entities/station.entity';
 
 export class MongoUserRepository
   extends MongoRepository<User, CreateUserInput, EditUserInput>
   implements IUserRepository<ClientSession>
 {
-  constructor(
-    @InjectModel(User.name) UserModel: Model<User>,
-    @InjectModel(Station.name) private StationModel: Model<Station>,
-    transactionService: MongoTransactionService,
-  ) {
+  constructor(@InjectModel(User.name) UserModel: Model<User>, transactionService: MongoTransactionService) {
     super(
       UserObject,
       User,
       UserNotFoundError,
       UserModel,
       transactionService,
-      ['stations'],
+      ['stations', 'subscriptions'],
       UserAlreadyExistsError,
     );
   }

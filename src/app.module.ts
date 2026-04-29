@@ -19,7 +19,7 @@ import { ConfigModule } from '@nestjs/config';
 import configuration from './infrastructure/configuration/configuration';
 import { MongooseModule } from '@nestjs/mongoose';
 import { User } from './bussiness/entities/user.entity';
-import { UserSchema } from './adapters/secondary/mongo/schemas/user.schema';
+import { UserSchema } from './adapters/secondary/mongo/schemas/document/user.schema';
 import { AuthService } from './bussiness/services/auth.service';
 import { IAuthService } from './bussiness/ports/input/services/i-auth.service';
 import { JwtModule } from '@nestjs/jwt';
@@ -31,6 +31,8 @@ import { PassportModule } from '@nestjs/passport';
 import { LocalStrategy } from './adapters/primary/http/controllers/strategies/local.strategy';
 import { JwtStrategy } from './adapters/primary/http/controllers/strategies/jwt.strategy';
 import { UserController } from './adapters/primary/http/controllers/user.controller';
+import { Station } from './bussiness/entities/station.entity';
+import { StationSchema } from './adapters/secondary/mongo/schemas/document/station.schema';
 
 const { mongo, jwt } = configuration();
 
@@ -38,7 +40,10 @@ const { mongo, jwt } = configuration();
   imports: [
     ConfigModule.forRoot({ isGlobal: true, load: [configuration] }),
     MongooseModule.forRoot(mongo.uri),
-    MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
+    MongooseModule.forFeature([
+      { name: User.name, schema: UserSchema },
+      { name: Station.name, schema: StationSchema },
+    ]),
     JwtModule.register({ global: true, secret: jwt.secret, signOptions: { expiresIn: '10d' } }),
     PassportModule,
   ],

@@ -17,7 +17,7 @@ import { ApiBearerAuth, ApiBody, ApiOkResponse, ApiOperation } from '@nestjs/swa
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { UserResponse } from './responses/user.response';
 import { EditUserDto } from './dtos/edit-user.dto';
-import { RegisterDto } from './dtos/register.dto';
+import { CreateUserDto } from './dtos/create-user.dto';
 import { IdDto } from './dtos/id.dto';
 
 @Controller('user')
@@ -29,7 +29,7 @@ export class UserController {
   @ApiOperation({ summary: 'Get all users' })
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
-  @ApiOkResponse({ type: UserResponse })
+  @ApiOkResponse({ type: UserResponse, isArray: true })
   @Get()
   async getAll(): Promise<Array<UserResponse>> {
     const users = await this.userService.getAll();
@@ -48,11 +48,11 @@ export class UserController {
   @ApiOperation({ summary: 'Create an user' })
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
-  @ApiBody({ type: RegisterDto })
+  @ApiBody({ type: CreateUserDto })
   @ApiOkResponse({ type: UserResponse })
   @Post()
-  async create(@Body() createUserDto: RegisterDto): Promise<UserResponse> {
-    return new UserResponse(await this.userService.create(createUserDto.toInput()));
+  async create(@Body() dto: CreateUserDto): Promise<UserResponse> {
+    return new UserResponse(await this.userService.create(dto.toInput()));
   }
 
   @ApiOperation({ summary: 'Delete an user' })

@@ -1,1 +1,15 @@
-export abstract class IStationService {}
+import { Station } from 'src/bussiness/entities/station.entity';
+import { EditStationInput } from './dtos/input/edit-station.input';
+import { CreateStationInput } from './dtos/input/create-station.input';
+
+export abstract class IStationService {
+  abstract getAll(): Promise<Array<Station>>;
+
+  abstract getById(id: string): Promise<Station>;
+
+  abstract edit(id: string, input: EditStationInput): Promise<Station>;
+
+  abstract delete(id: string): Promise<Station>;
+
+  abstract create(input: CreateStationInput): Promise<Station>;
+}

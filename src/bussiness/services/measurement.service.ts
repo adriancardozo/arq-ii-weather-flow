@@ -27,7 +27,7 @@ export class MeasurementService<Session = any>
     return await this.transactionService.transaction(async (session) => {
       const station = await this.stationRepository.findOneByOrFail({ id: input.station }, session);
       const measurement = await this.repository.save(
-        new Measurement(undefined, input.pressure, input.temperature, input.humidity, station),
+        new Measurement(undefined, input.pressure, input.temperature, input.humidity, station, new Date()),
         session,
       );
       station.addMeasurement(measurement);

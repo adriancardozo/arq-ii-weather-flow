@@ -7,6 +7,8 @@ import { EditStationInput } from '../ports/input/services/dtos/input/edit-statio
 import { ITransactionService } from '../ports/output/services/i-transaction.service';
 import { Service } from './service';
 import { IUserRepository } from '../ports/output/repositories/i-user.repository';
+import { SearchInput } from '../ports/input/services/dtos/input/search.input';
+import { Search } from '../aggregates/search.aggergate';
 
 @Injectable()
 export class StationService<Session = any>
@@ -66,6 +68,13 @@ export class StationService<Session = any>
       station.subscribe(user);
       await this.userRepository.updateOne(user, session);
       return await this.repository.updateOne(station, session);
+    }, session);
+  }
+
+  async search(input: SearchInput, session?: Session): Promise<Search> {
+    return await this.transactionService.transaction(async (session) => {
+      const station = await this.repository.findOneByOrFail({ name: input.station }, session);
+      return station.search(input);
     }, session);
   }
 }

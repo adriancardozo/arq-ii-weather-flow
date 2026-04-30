@@ -3,7 +3,7 @@ import { IEntity } from './i.entity';
 import { Station } from './station.entity';
 
 export class Measurement extends IEntity<EditMeasurementInput> {
-  datetime: Date = new Date();
+  datetime: Date;
   alert: boolean;
   alertType: 'Ninguna' | 'Calor extremo' | 'Helada' | 'Tormenta' | 'Humedad crítica' = 'Ninguna';
   pressure: number;
@@ -26,7 +26,7 @@ export class Measurement extends IEntity<EditMeasurementInput> {
     temperature?: number,
     humidity?: number,
     station?: Station,
-    datetime: Date = new Date(),
+    datetime?: Date,
   ) {
     super();
     this.id = id;
@@ -35,7 +35,7 @@ export class Measurement extends IEntity<EditMeasurementInput> {
       this.temperature = temperature;
       this.humidity = humidity;
       this.station = station;
-      this.datetime = datetime;
+      if (datetime) this.datetime = datetime;
       this.evalAlert();
     }
   }
@@ -46,6 +46,10 @@ export class Measurement extends IEntity<EditMeasurementInput> {
     this.temperature = temperature ?? this.temperature;
     if (station?.id) this.station = new Station(station.id);
     this.evalAlert();
+  }
+
+  active(activeThreshold: number): boolean {
+    return new Date().valueOf() - this.datetime.valueOf() < activeThreshold;
   }
 
   private evalAlert() {

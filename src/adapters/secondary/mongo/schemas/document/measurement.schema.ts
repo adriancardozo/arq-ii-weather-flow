@@ -3,7 +3,7 @@ import { Station } from 'src/bussiness/entities/station.entity';
 
 export const MeasurementSchema = new Schema(
   {
-    date: Date,
+    datetime: Date,
     alert: Boolean,
     alertType: {
       type: String,

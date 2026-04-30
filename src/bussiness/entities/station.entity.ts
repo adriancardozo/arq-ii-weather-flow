@@ -3,6 +3,8 @@ import { IEntity } from './i.entity';
 import { User } from './user.entity';
 import { Location } from '../value-objects/location.value-object';
 import { Measurement } from './measurement.entity';
+import { SearchInput } from '../ports/input/services/dtos/input/search.input';
+import { Search } from '../aggregates/search.aggergate';
 
 export class Station extends IEntity<EditStationInput> {
   name: string;
@@ -61,6 +63,10 @@ export class Station extends IEntity<EditStationInput> {
   addMeasurement(measurement: Measurement) {
     this.measurements = [...this.measurements, measurement];
     if (measurement.alert) this.notifyAlert(measurement);
+  }
+
+  search(input: SearchInput): Search {
+    return new Search(this, input);
   }
 
   private notifyAlert(measurement: Measurement) {

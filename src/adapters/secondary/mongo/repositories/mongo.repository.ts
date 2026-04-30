@@ -166,7 +166,7 @@ export abstract class MongoRepository<
       (relation) =>
         (relationIds[relation] =
           updated[relation] instanceof Array
-            ? updated[relation].map(({ id }) => id)
+            ? updated[relation].map((element) => element?.id)
             : updated[relation].id),
     );
     return relationIds;

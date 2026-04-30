@@ -31,6 +31,8 @@ export const notFoundError = new UserNotFoundError();
 
 export const deletedUser: jest.Mocked<User> = mock(User);
 
+deletedUser.stations = [];
+
 export const editUserId = '1234abcd';
 
 export const editUserInput: EditUserInput = {

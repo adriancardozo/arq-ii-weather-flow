@@ -3,6 +3,9 @@ import { CreateStationInput } from 'src/bussiness/ports/input/services/dtos/inpu
 import { IStationRepository } from 'src/bussiness/ports/output/repositories/i-station.repository';
 
 export class MockStationRepository implements IStationRepository {
+  updateMany(stations: Station[], session?: any): Promise<Station[]> {
+    throw new Error('Method not implemented.');
+  }
   save(input: CreateStationInput, session?: any): Promise<Station> {
     throw new Error('Method not implemented.');
   }

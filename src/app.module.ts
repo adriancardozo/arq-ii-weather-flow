@@ -33,6 +33,9 @@ import { JwtStrategy } from './adapters/primary/http/controllers/strategies/jwt.
 import { UserController } from './adapters/primary/http/controllers/user.controller';
 import { Station } from './bussiness/entities/station.entity';
 import { StationSchema } from './adapters/secondary/mongo/schemas/document/station.schema';
+import { Measurement } from './bussiness/entities/measurement.entity';
+import { MeasurementSchema } from './adapters/secondary/mongo/schemas/document/measurement.schema';
+import { SearchController } from './adapters/primary/http/controllers/search.controller';
 
 const { mongo, jwt } = configuration();
 
@@ -43,11 +46,19 @@ const { mongo, jwt } = configuration();
     MongooseModule.forFeature([
       { name: User.name, schema: UserSchema },
       { name: Station.name, schema: StationSchema },
+      { name: Measurement.name, schema: MeasurementSchema },
     ]),
     JwtModule.register({ global: true, secret: jwt.secret, signOptions: { expiresIn: '10d' } }),
     PassportModule,
   ],
-  controllers: [AppController, AuthController, MeasurementController, StationController, UserController],
+  controllers: [
+    AppController,
+    AuthController,
+    MeasurementController,
+    StationController,
+    UserController,
+    SearchController,
+  ],
   providers: [
     Logger,
     MeasurementService,

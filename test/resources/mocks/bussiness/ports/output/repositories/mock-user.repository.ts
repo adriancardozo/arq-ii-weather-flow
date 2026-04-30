@@ -3,6 +3,9 @@ import { CreateUserInput } from 'src/bussiness/ports/input/services/dtos/input/c
 import { IUserRepository } from 'src/bussiness/ports/output/repositories/i-user.repository';
 
 export class MockUserRepository implements IUserRepository {
+  updateMany(stations: User[], session?: any): Promise<User[]> {
+    throw new Error('Method not implemented.');
+  }
   find(filter: Partial<User>, session?: any): Promise<Array<User>> {
     throw new Error('Method not implemented.');
   }

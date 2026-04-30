@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   Post,
+  Put,
   UseFilters,
   UseGuards,
   UsePipes,
@@ -19,6 +20,8 @@ import { IStationService } from 'src/bussiness/ports/input/services/i-station.se
 import { StationResponse } from './responses/station.response';
 import { CreateStationDto } from './dtos/create-station.dto';
 import { EditStationDto } from './dtos/edit-station.dto';
+import { SubscribeDto } from './dtos/subscribe.dto';
+import { SubscribeResponse } from './responses/subscribe.response';
 
 @Controller('station')
 @UsePipes(VALIDATION_PIPE)
@@ -36,7 +39,7 @@ export class StationController {
     return stations.map((station) => new StationResponse(station));
   }
 
-  @ApiOperation({ summary: 'Get an station' })
+  @ApiOperation({ summary: 'Get a station' })
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @ApiOkResponse({ type: StationResponse })
@@ -45,7 +48,7 @@ export class StationController {
     return new StationResponse(await this.stationService.getById(param.id));
   }
 
-  @ApiOperation({ summary: 'Create an station' })
+  @ApiOperation({ summary: 'Create a station' })
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @ApiBody({ type: CreateStationDto })
@@ -55,7 +58,7 @@ export class StationController {
     return new StationResponse(await this.stationService.create(dto.toInput()));
   }
 
-  @ApiOperation({ summary: 'Delete an station' })
+  @ApiOperation({ summary: 'Delete a station' })
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @ApiOkResponse({ type: StationResponse })
@@ -64,7 +67,7 @@ export class StationController {
     return new StationResponse(await this.stationService.delete(param.id));
   }
 
-  @ApiOperation({ summary: 'Edit an station' })
+  @ApiOperation({ summary: 'Edit a station' })
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @ApiBody({ type: EditStationDto })
@@ -72,5 +75,14 @@ export class StationController {
   @Patch(':id')
   async edit(@Param() param: IdDto, @Body() dto: EditStationDto): Promise<StationResponse> {
     return new StationResponse(await this.stationService.edit(param.id, dto.toInput()));
+  }
+
+  @ApiOperation({ summary: 'Subscribe to station' })
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @ApiOkResponse({ type: SubscribeResponse })
+  @Put(':id/subscribe/:user_id')
+  async subscribe(@Param() param: SubscribeDto): Promise<SubscribeResponse> {
+    return new SubscribeResponse(await this.stationService.subscribe(param.id, param.user_id));
   }
 }

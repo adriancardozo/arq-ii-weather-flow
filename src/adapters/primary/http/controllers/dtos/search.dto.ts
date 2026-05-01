@@ -32,7 +32,7 @@ export class SearchDto {
   toInput(): SearchInput {
     return new SearchInput(
       this.station,
-      this.active_range,
+      this.active_range * 60 * 1000,
       this.min_temperature,
       this.max_temperature,
       this.active,

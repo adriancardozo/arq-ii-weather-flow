@@ -16,7 +16,7 @@ export abstract class IRepository<
 
   abstract updateOne(updated: Entity, session?: Session): Promise<Entity>;
 
-  abstract updateMany(stations: Array<Entity>, session?: Session): Promise<Array<Entity>>;
+  abstract updateMany(entities: Array<Entity>, session?: Session): Promise<Array<Entity>>;
 
   abstract find(filter: Partial<Entity>, session?: Session): Promise<Array<Entity>>;
 }

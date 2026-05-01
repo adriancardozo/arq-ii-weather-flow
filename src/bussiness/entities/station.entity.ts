@@ -62,7 +62,6 @@ export class Station extends IEntity<EditStationInput> {
 
   addMeasurement(measurement: Measurement) {
     this.measurements = [...this.measurements, measurement];
-    if (measurement.alert) this.notifyAlert(measurement);
   }
 
   search(input: SearchInput): Search {

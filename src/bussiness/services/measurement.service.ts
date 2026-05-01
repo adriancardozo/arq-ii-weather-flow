@@ -8,6 +8,7 @@ import { RegisterMeasurementInput } from '../ports/input/services/dtos/input/reg
 import { ITransactionService } from '../ports/output/services/i-transaction.service';
 import { IUserRepository } from '../ports/output/repositories/i-user.repository';
 import { IStationRepository } from '../ports/output/repositories/i-station.repository';
+import { User } from '../entities/user.entity';
 
 @Injectable()
 export class MeasurementService<Session = any>
@@ -31,8 +32,14 @@ export class MeasurementService<Session = any>
         session,
       );
       station.addMeasurement(measurement);
+      const subscribers: Array<User> = [];
+      for (const user of station.subscribers) {
+        const subscriber = await this.userRepository.findOneByOrFail({ id: user.id }, session);
+        subscriber.notifyAlert(measurement);
+        subscribers.push(subscriber);
+      }
       await this.stationRepository.updateOne(station, session);
-      await this.userRepository.updateMany(station.subscribers);
+      await this.userRepository.updateMany(subscribers);
       return measurement;
     }, session);
   }
